@@ -56,6 +56,9 @@ public class MidiParser {
                     int key = sm.getData1();
                     int velocity = sm.getData2();
                     
+                    while(key < 24)
+                        key += 12;
+                    
                     while(key > 84)
                         key -= 12;
                     
