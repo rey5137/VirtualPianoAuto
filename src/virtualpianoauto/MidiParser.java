@@ -55,6 +55,10 @@ public class MidiParser {
                     ShortMessage sm = (ShortMessage) message;
                     int key = sm.getData1();
                     int velocity = sm.getData2();
+                    
+                    while(key > 84)
+                        key -= 12;
+                    
                     if(sm.getCommand() == NOTE_OFF_ALL){
                         //TODO: handle it
                     }

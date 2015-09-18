@@ -113,8 +113,16 @@ public enum Key {
         KEYS_MAP.put(this.key, this);
     }
     
-    public static Key fromValue(int key){
-        return KEYS_MAP.get(key);
+    public static Key fromValue(int value){
+        Key key = KEYS_MAP.get(value);
+        if(key == null){
+            int octave = value / 12 - 1;
+            int note = value % 2;
+            
+            System.err.println("Can not find key for value = " + value + " octave = " + octave + " note = " + NoteName.fromIndex(note));
+            
+        }
+        return key;
     }
 
     @Override
