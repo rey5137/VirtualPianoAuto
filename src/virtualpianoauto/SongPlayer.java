@@ -8,7 +8,6 @@ package virtualpianoauto;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
-import javax.security.auth.callback.Callback;
 import virtualpianoauto.midi.Event;
 import virtualpianoauto.midi.Key;
 
@@ -22,9 +21,19 @@ public class SongPlayer {
             
     private Thread mThread;
     
-    public void play(Event[] events, long milisPerTick, Runnable runnable) throws AWTException{
+    public interface OnPlayListener{
+        
+        void onPlayed(int count, int total);
+        
+        void onInterrupted();
+        
+        void onEnded();
+        
+    }
+    
+    public void play(Event[] events, long milisPerTick, OnPlayListener listener) throws AWTException{
         stop();
-        mThread = new Thread(new Task(events, milisPerTick, runnable));
+        mThread = new Thread(new Task(events, milisPerTick, listener));
         mThread.start();
     }
     
@@ -43,13 +52,13 @@ public class SongPlayer {
         Event[] mEvents;   
         long mMilisPerTick;
         Robot mRobot;
-        Runnable mRunnable;
+        OnPlayListener mListener;
         
-        public Task(Event[] events, long milisPerTick, Runnable runnable) throws AWTException{
+        public Task(Event[] events, long milisPerTick, OnPlayListener listener) throws AWTException{
             mEvents = events;
             mMilisPerTick = milisPerTick;
             mRobot = new Robot();
-            mRunnable = runnable;
+            mListener = listener;
         }
 
         private void pressKey(Key key){
@@ -81,37 +90,40 @@ public class SongPlayer {
         public void run() {            
             if(mEvents[0].tick > 0 && !sleep(mEvents[0].tick)){
                 mThread = null;
-                if(mRunnable != null)
-                    mRunnable.run();
+                if(mListener != null)
+                    mListener.onInterrupted();
                 return;
             }
                         
             for(int i = 0; i < mEvents.length; i++){
                 if(mEvents[i].down)
                     pressKey(mEvents[i].key);
-//                else
-//                    releaseKey(mEvents[i].key);                
+                else
+                    releaseKey(mEvents[i].key);
+                
+                if(mListener != null)
+                    mListener.onPlayed(i + 1, mEvents.length);
                 
                 if(Thread.interrupted()){
                     mThread = null;
-                    if(mRunnable != null)
-                        mRunnable.run();
+                    if(mListener != null)
+                        mListener.onInterrupted();
                     return;
                 }
                 
                 if(i < mEvents.length - 1){
                     if(!sleep(mEvents[i + 1].tick - mEvents[i].tick)){
                         mThread = null;
-                        if(mRunnable != null)
-                            mRunnable.run();
+                        if(mListener != null)
+                            mListener.onInterrupted();
                         return;
                     }
                 }
             }
             
             mThread = null;
-            if(mRunnable != null)
-                mRunnable.run();
+            if(mListener != null)
+                mListener.onEnded();
         }        
     }
 }

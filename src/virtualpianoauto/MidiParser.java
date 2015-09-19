@@ -34,7 +34,7 @@ public class MidiParser {
     public static final int NOTE_OFF = 0x80;
     public static final int NOTE_OFF_ALL = 0x58;
 
-    public static Song parse(File file) throws InvalidMidiDataException, IOException{
+    public static Song parse(File file, boolean includeOffEvent) throws InvalidMidiDataException, IOException{
         Sequence sequence = MidiSystem.getSequence(file);        
         Song song = new Song();
         song.miliPerTick = sequence.getMicrosecondLength() / sequence.getTickLength() / 1000;
@@ -65,8 +65,10 @@ public class MidiParser {
                     if(sm.getCommand() == NOTE_OFF_ALL){
                         //TODO: handle it
                     }
-                    else if (sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && velocity <= 0))
-                        list.add(Event.instance(false, Key.fromValue(key), tick, velocity));         
+                    else if (sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && velocity <= 0)){
+                        if(includeOffEvent)
+                            list.add(Event.instance(false, Key.fromValue(key), tick, velocity));         
+                    }
                     else if (sm.getCommand() == NOTE_ON)                         
                         list.add(Event.instance(true, Key.fromValue(key), tick, velocity));
                 }

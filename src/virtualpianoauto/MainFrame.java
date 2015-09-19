@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -36,6 +37,36 @@ public class MainFrame extends javax.swing.JFrame {
     private SongPlayer mPlayer = new SongPlayer();
     private Event[] mEvents;
     
+    private SongPlayer.OnPlayListener mOnPlayListener = new SongPlayer.OnPlayListener() {
+
+        @Override
+        public void onPlayed(int count, int total) {
+            lbPlayed.setText("Played: " + count + " / " + total);
+        }
+
+        @Override
+        public void onInterrupted() {
+            btPlay.setText("Start");
+            tf_milis.setEnabled(true);
+            btOpen.setEnabled(true);
+            ltAvailable.setEnabled(true);
+            ltSelect.setEnabled(true);
+            lbPlayed.setText("Played:");
+            btSheet.setEnabled(true);
+        }
+
+        @Override
+        public void onEnded() {
+            btPlay.setText("Start");
+            tf_milis.setEnabled(true);
+            btOpen.setEnabled(true);
+            ltAvailable.setEnabled(true);
+            ltSelect.setEnabled(true);
+            lbPlayed.setText("Played:");
+            btSheet.setEnabled(true);
+        }
+        
+    };
     
 //    public interface User32 extends StdCallLibrary {
 //        User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class);
@@ -80,6 +111,8 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         ltSelect = new javax.swing.JList();
         jLabel5 = new javax.swing.JLabel();
+        lbPlayed = new javax.swing.JLabel();
+        btSheet = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("VirtualPiano Auto");
@@ -163,6 +196,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel5.setText("Apps");
 
+        lbPlayed.setText("Played:");
+
+        btSheet.setText("Get Sheet");
+        btSheet.setEnabled(false);
+        btSheet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSheetActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -171,40 +214,49 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(btAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(144, 144, 144)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(0, 105, Short.MAX_VALUE))
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btOpen, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btPlay, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btRefresh))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel5)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tf_milis, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbWindow, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jLabel2))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(btAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(144, 144, 144)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addGap(0, 105, Short.MAX_VALUE))
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btRefresh))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btSheet))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btOpen, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(110, 110, 110)
+                                        .addComponent(btPlay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(lbPlayed)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(tf_milis, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cbWindow, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel2))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -222,20 +274,25 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(tf_milis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(btRefresh))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btPlay)
-                            .addComponent(btRefresh)
-                            .addComponent(btOpen)))
+                            .addComponent(btOpen))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btSheet))
                     .addComponent(btAdd)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(btRemove)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(lbPlayed))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addContainerGap())
@@ -265,6 +322,7 @@ public class MainFrame extends javax.swing.JFrame {
             btOpen.setEnabled(true);
             ltAvailable.setEnabled(true);
             ltSelect.setEnabled(true);
+            lbPlayed.setText("Played:");
         }
         else{
             Window window = mWindows.get(cbWindow.getSelectedIndex());
@@ -279,26 +337,14 @@ public class MainFrame extends javax.swing.JFrame {
             System.out.println("Started!");
 
             try {
-                mPlayer.play(mEvents, getMilisPerTick(), new Runnable() {
-
-                    @Override
-                    public void run() {
-                        mPlayer.stop();
-                        btPlay.setText("Start");
-                        tf_milis.setEnabled(true);
-                        btOpen.setEnabled(true);
-                        ltAvailable.setEnabled(true);
-                        ltSelect.setEnabled(true);
-                    }
-                    
-                });
+                mPlayer.play(mEvents, getMilisPerTick(), mOnPlayListener);
                 
                 btPlay.setText("Stop");
                 tf_milis.setEnabled(false);
                 btOpen.setEnabled(false);
                 ltAvailable.setEnabled(false);
                 ltSelect.setEnabled(false);
-            
+                btSheet.setEnabled(false);            
             } catch (Exception ex) {
                 System.out.println("error" + ex);
                 ex.printStackTrace();
@@ -371,15 +417,46 @@ public class MainFrame extends javax.swing.JFrame {
         onTrackChanged();
     }//GEN-LAST:event_btAddActionPerformed
 
+    private void btSheetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSheetActionPerformed
+        StringBuilder sb = new StringBuilder();
+        long tick = -1;
+        int lineCount = 0;
+        int max = 160;
+        
+        if(mEvents != null){
+            for(Event event : mEvents){
+                if(event.tick != tick){
+                    tick = event.tick;
+                    if(sb.length() > 0){
+                        if(lineCount < max){
+                            sb.append(" ");
+                            lineCount++;
+                        }
+                        else{
+                            sb.append("\n");
+                            lineCount = 0;
+                        }
+                    }
+                }
+                
+                sb.append(event.key.character);
+                lineCount++;          
+            }        
+            String sheet = sb.toString();
+            JOptionPane.showMessageDialog(this, sheet, "Sheet", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btSheetActionPerformed
+
     private void parseFile(File file){
         try {
-            mSong = MidiParser.parse(file);            
+            mSong = MidiParser.parse(file, false);            
             populateTracks(mSong);
             tf_milis.setText(String.valueOf(mSong.miliPerTick));
             tf_milis.setEnabled(true);
             btPlay.setEnabled(true);
             btPlay.setText("Start");
-            
+            btSheet.setEnabled(true);           
+            setTitle("VirtualPianoAuto - " + file.getName());            
         } catch (Exception ex) {
             System.out.println("Error: " + ex);
             ex.printStackTrace();
@@ -490,6 +567,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btPlay;
     private javax.swing.JButton btRefresh;
     private javax.swing.JButton btRemove;
+    private javax.swing.JButton btSheet;
     private javax.swing.JComboBox cbWindow;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -499,6 +577,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lbPlayed;
     private javax.swing.JList ltAvailable;
     private javax.swing.JList ltSelect;
     private javax.swing.JTable tbEvent;
