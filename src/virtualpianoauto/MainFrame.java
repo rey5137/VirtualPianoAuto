@@ -19,6 +19,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -421,7 +423,7 @@ public class MainFrame extends javax.swing.JFrame {
         StringBuilder sb = new StringBuilder();
         long tick = -1;
         int lineCount = 0;
-        int max = 160;
+        int max = 100;
         
         if(mEvents != null){
             for(Event event : mEvents){
@@ -443,7 +445,13 @@ public class MainFrame extends javax.swing.JFrame {
                 lineCount++;          
             }        
             String sheet = sb.toString();
-            JOptionPane.showMessageDialog(this, sheet, "Sheet", JOptionPane.INFORMATION_MESSAGE);
+            
+            JTextArea ta = new JTextArea(sheet);
+            ta.setWrapStyleWord(true);
+            ta.setLineWrap(false);
+            ta.setCaretPosition(0);
+            ta.setEditable(false);
+            JOptionPane.showMessageDialog(null, new JScrollPane(ta), "Sheet", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btSheetActionPerformed
 
