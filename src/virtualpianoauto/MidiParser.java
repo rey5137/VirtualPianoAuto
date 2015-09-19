@@ -37,7 +37,7 @@ public class MidiParser {
     public static Song parse(File file, boolean includeOffEvent) throws InvalidMidiDataException, IOException{
         Sequence sequence = MidiSystem.getSequence(file);        
         Song song = new Song();
-        song.miliPerTick = sequence.getMicrosecondLength() / sequence.getTickLength() / 1000;
+        song.microPerTick = sequence.getMicrosecondLength() / sequence.getTickLength();
         
         Track[] tracks = sequence.getTracks();
         song.events = new Event[tracks.length][];

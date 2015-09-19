@@ -11,7 +11,7 @@ package virtualpianoauto.midi;
  */
 public class Song {
     
-    public long miliPerTick;
+    public long microPerTick;
     
     public Event[][] events;
     

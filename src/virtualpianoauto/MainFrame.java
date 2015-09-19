@@ -49,7 +49,7 @@ public class MainFrame extends javax.swing.JFrame {
         @Override
         public void onInterrupted() {
             btPlay.setText("Start");
-            tf_milis.setEnabled(true);
+            tfMicros.setEnabled(true);
             btOpen.setEnabled(true);
             ltAvailable.setEnabled(true);
             ltSelect.setEnabled(true);
@@ -60,7 +60,7 @@ public class MainFrame extends javax.swing.JFrame {
         @Override
         public void onEnded() {
             btPlay.setText("Start");
-            tf_milis.setEnabled(true);
+            tfMicros.setEnabled(true);
             btOpen.setEnabled(true);
             ltAvailable.setEnabled(true);
             ltSelect.setEnabled(true);
@@ -103,7 +103,7 @@ public class MainFrame extends javax.swing.JFrame {
         cbWindow = new javax.swing.JComboBox();
         btRefresh = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        tf_milis = new javax.swing.JTextField();
+        tfMicros = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         ltAvailable = new javax.swing.JList();
         jLabel3 = new javax.swing.JLabel();
@@ -141,14 +141,14 @@ public class MainFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Key", "Tick", "Down"
+                "Key", "Tick"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Long.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.Long.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -170,9 +170,9 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("MilisPerTick");
+        jLabel2.setText("MicrosPerTick");
 
-        tf_milis.setEnabled(false);
+        tfMicros.setEnabled(false);
 
         jScrollPane2.setViewportView(ltAvailable);
 
@@ -255,7 +255,7 @@ public class MainFrame extends javax.swing.JFrame {
                                         .addComponent(btPlay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addComponent(lbPlayed)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(tf_milis, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(tfMicros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(cbWindow, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jLabel2))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
@@ -274,7 +274,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(tf_milis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tfMicros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
@@ -320,7 +320,7 @@ public class MainFrame extends javax.swing.JFrame {
         if(mPlayer.isPlaying()){
             mPlayer.stop();
             btPlay.setText("Start");
-            tf_milis.setEnabled(true);
+            tfMicros.setEnabled(true);
             btOpen.setEnabled(true);
             ltAvailable.setEnabled(true);
             ltSelect.setEnabled(true);
@@ -339,10 +339,10 @@ public class MainFrame extends javax.swing.JFrame {
             System.out.println("Started!");
 
             try {
-                mPlayer.play(mEvents, getMilisPerTick(), mOnPlayListener);
+                mPlayer.play(mEvents, getMicrosPerTick(), mOnPlayListener);
                 
                 btPlay.setText("Stop");
-                tf_milis.setEnabled(false);
+                tfMicros.setEnabled(false);
                 btOpen.setEnabled(false);
                 ltAvailable.setEnabled(false);
                 ltSelect.setEnabled(false);
@@ -459,8 +459,8 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             mSong = MidiParser.parse(file, false);            
             populateTracks(mSong);
-            tf_milis.setText(String.valueOf(mSong.miliPerTick));
-            tf_milis.setEnabled(true);
+            tfMicros.setText(String.valueOf(mSong.microPerTick));
+            tfMicros.setEnabled(true);
             btPlay.setEnabled(true);
             btPlay.setText("Start");
             btSheet.setEnabled(true);           
@@ -526,16 +526,16 @@ public class MainFrame extends javax.swing.JFrame {
         
         if(events != null)
             for(Event event : events)
-                model.addRow(new Object[]{event.key.character, event.tick, event.down});    
+                model.addRow(new Object[]{event.key.character, event.tick});    
     }
     
-    private long getMilisPerTick(){
+    private long getMicrosPerTick(){
         try{
-            return Long.parseLong(tf_milis.getText());
+            return Long.parseLong(tfMicros.getText());
         }
         catch(Exception ex){
-            tf_milis.setText(String.valueOf(mSong.miliPerTick));
-            return mSong.miliPerTick;
+            tfMicros.setText(String.valueOf(mSong.microPerTick));
+            return mSong.microPerTick;
         }
     }
     
@@ -589,6 +589,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JList ltAvailable;
     private javax.swing.JList ltSelect;
     private javax.swing.JTable tbEvent;
-    private javax.swing.JTextField tf_milis;
+    private javax.swing.JTextField tfMicros;
     // End of variables declaration//GEN-END:variables
 }

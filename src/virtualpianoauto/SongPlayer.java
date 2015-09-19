@@ -31,9 +31,9 @@ public class SongPlayer {
         
     }
     
-    public void play(Event[] events, long milisPerTick, OnPlayListener listener) throws AWTException{
+    public void play(Event[] events, long microsPerTick, OnPlayListener listener) throws AWTException{
         stop();
-        mThread = new Thread(new Task(events, milisPerTick, listener));
+        mThread = new Thread(new Task(events, microsPerTick, listener));
         mThread.start();
     }
     
@@ -50,13 +50,13 @@ public class SongPlayer {
     
     private class Task implements Runnable{
         Event[] mEvents;   
-        long mMilisPerTick;
+        long mMicrosPerTick;
         Robot mRobot;
         OnPlayListener mListener;
         
-        public Task(Event[] events, long milisPerTick, OnPlayListener listener) throws AWTException{
+        public Task(Event[] events, long microsPerTick, OnPlayListener listener) throws AWTException{
             mEvents = events;
-            mMilisPerTick = milisPerTick;
+            mMicrosPerTick = microsPerTick;
             mRobot = new Robot();
             mListener = listener;
         }
@@ -79,7 +79,10 @@ public class SongPlayer {
         
         private boolean sleep(long tick){
             try {
-                Thread.sleep(tick * mMilisPerTick);
+                long micro = tick * mMicrosPerTick;
+                long milis = micro / 1000;
+                int nanos = (int)((micro % 1000) * 1000);
+                Thread.sleep(milis, nanos);
                 return true;
             } catch (InterruptedException ex) {
                 return false;
